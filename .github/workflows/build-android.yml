@@ -14,7 +14,7 @@ jobs:
   build:
     name: Build full-gpl AAR (arm-v7a + arm64-v8a)
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 360
 
     steps:
       - name: Checkout
@@ -56,6 +56,7 @@ jobs:
           chmod +x android.sh
           ./android.sh --full --enable-gpl \
             --disable-x86 --disable-x86-64 \
+            --disable-arm-v7a-neon \
             --disable-lib-sdl \
             --disable-lib-tesseract \
             --disable-lib-leptonica \
@@ -68,7 +69,7 @@ jobs:
             --disable-lib-gnutls \
             --disable-lib-openssl \
             --no-archive
-        timeout-minutes: 150
+        timeout-minutes: 300
 
       - name: Print build log on failure
         if: failure()
