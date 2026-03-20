@@ -73,14 +73,16 @@ jobs:
       - name: Print build log on failure
         if: failure()
         run: |
-          echo "=== LAST 200 LINES OF build.log ==="
-          tail -200 build.log || echo "build.log not found"
-          echo ""
-          echo "=== CHECKING FOR LIBRARY-SPECIFIC LOGS ==="
-          for log in $(find . -name "*.log" -path "*/src/*" -newer android.sh 2>/dev/null | head -10); do
-            echo "--- $log (last 50 lines) ---"
-            tail -50 "$log"
-          done
+          echo "=== LAST 500 LINES OF build.log ==="
+          tail -500 build.log || echo "build.log not found"
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          retention-days: 7
 
       - name: Package AAR
         run: |
