@@ -54,7 +54,7 @@ jobs:
       - name: Build FFmpeg Kit (full-gpl, arm-v7a + arm64-v8a)
         run: |
           chmod +x android.sh
-          ./android.sh --full --enable-gpl --disable-x86 --disable-x86-64 --skip-sdl --skip-tesseract --no-archive
+          ./android.sh --full --enable-gpl --disable-x86 --disable-x86-64 --disable-lib-sdl --disable-lib-tesseract --disable-lib-chromaprint --disable-lib-openssl --disable-lib-srt --no-archive
         timeout-minutes: 150
 
       - name: Package AAR
