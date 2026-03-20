@@ -1055,7 +1055,8 @@ process_common_toolchain() {
         android*)
           echo "Assuming standalone build with NDK toolchain."
           echo "See build/make/Android.mk for details."
-          check_add_ldflags -static
+          # NOTE: -static removed for NDK r27 compatibility
+          # Static linking is not well supported on Android
           soft_enable unit_tests
           ;;
 
