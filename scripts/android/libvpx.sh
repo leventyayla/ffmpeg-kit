@@ -3,6 +3,11 @@
 # UPDATE BUILD FLAGS
 export CFLAGS="$(get_cflags "${LIB_NAME}") -I${LIB_INSTALL_BASE}/cpu-features/include/ndk_compat"
 
+# FIX: Use CC as linker driver instead of standalone lld
+# NDK r27's lld cannot link executables without sysroot/library paths
+# that clang provides automatically when used as linker driver
+export LD=${CC}
+
 # SET BUILD OPTIONS
 TARGET_CPU=""
 ASM_OPTIONS=""
