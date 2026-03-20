@@ -65,6 +65,8 @@ jobs:
             --disable-lib-libsndfile \
             --disable-lib-libsamplerate \
             --disable-lib-srt \
+            --disable-lib-gnutls \
+            --disable-lib-openssl \
             --no-archive
         timeout-minutes: 150
 
