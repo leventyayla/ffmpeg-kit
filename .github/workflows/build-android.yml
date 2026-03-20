@@ -70,6 +70,18 @@ jobs:
             --no-archive
         timeout-minutes: 150
 
+      - name: Print build log on failure
+        if: failure()
+        run: |
+          echo "=== LAST 200 LINES OF build.log ==="
+          tail -200 build.log || echo "build.log not found"
+          echo ""
+          echo "=== CHECKING FOR LIBRARY-SPECIFIC LOGS ==="
+          for log in $(find . -name "*.log" -path "*/src/*" -newer android.sh 2>/dev/null | head -10); do
+            echo "--- $log (last 50 lines) ---"
+            tail -50 "$log"
+          done
+
       - name: Package AAR
         run: |
           cd android/ffmpeg-kit-android-lib
