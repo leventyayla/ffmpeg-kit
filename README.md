@@ -1,5 +1,11 @@
 # FFmpegKit ![GitHub release](https://img.shields.io/badge/release-v6.0-blue.svg) ![Maven Central](https://img.shields.io/maven-central/v/com.arthenica/ffmpeg-kit-min) ![CocoaPods](https://img.shields.io/cocoapods/v/ffmpeg-kit-ios-min) ![pub](https://img.shields.io/pub/v/ffmpeg_kit_flutter.svg) ![npm](https://img.shields.io/npm/v/ffmpeg-kit-react-native.svg)
 
+## Fork Notice
+This repository is a fork of [arthenica/ffmpeg-kit](https://github.com/arthenica/ffmpeg-kit).
+
+If you are looking for the original project, upstream history, or upstream documentation, please start there.
+This fork keeps the original project structure and adds maintenance and release automation for this repository, including Morph-specific Android builds.
+
 ## Notice
 FFmpegKit has been officially retired. There will be no further `ffmpeg-kit` releases.
 
