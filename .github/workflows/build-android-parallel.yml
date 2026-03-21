@@ -10,6 +10,19 @@ jobs:
     timeout-minutes: 360
 
     steps:
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/boost
+          sudo docker image prune -af 2>/dev/null || true
+          df -h /
+
+      - name: Add swap
+        run: |
+          sudo fallocate -l 8G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -25,7 +38,7 @@ jobs:
           sudo apt-get install -y autoconf automake libtool pkg-config \
             curl git doxygen nasm cmake gcc gperf texinfo yasm bison \
             autogen wget autopoint meson ninja-build ragel groff gtk-doc-tools \
-            libtool-bin
+            libtool-bin ccache
 
       - name: Setup Android SDK & NDK
         run: |
@@ -63,11 +76,11 @@ jobs:
             --no-archive
         timeout-minutes: 350
 
-      - name: Upload prebuilt arm-v7a
+      - name: Upload libs arm-v7a
         uses: actions/upload-artifact@v4
         with:
-          name: prebuilt-armv7a
-          path: prebuilt/android-arm/
+          name: libs-armv7a
+          path: android/libs/
           retention-days: 1
 
       - name: Print build log on failure
@@ -90,6 +103,19 @@ jobs:
     timeout-minutes: 360
 
     steps:
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/boost
+          sudo docker image prune -af 2>/dev/null || true
+          df -h /
+
+      - name: Add swap
+        run: |
+          sudo fallocate -l 8G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -105,7 +131,7 @@ jobs:
           sudo apt-get install -y autoconf automake libtool pkg-config \
             curl git doxygen nasm cmake gcc gperf texinfo yasm bison \
             autogen wget autopoint meson ninja-build ragel groff gtk-doc-tools \
-            libtool-bin
+            libtool-bin ccache
 
       - name: Setup Android SDK & NDK
         run: |
@@ -143,11 +169,11 @@ jobs:
             --no-archive
         timeout-minutes: 350
 
-      - name: Upload prebuilt arm64-v8a
+      - name: Upload libs arm64-v8a
         uses: actions/upload-artifact@v4
         with:
-          name: prebuilt-arm64v8a
-          path: prebuilt/android-arm64/
+          name: libs-arm64v8a
+          path: android/libs/
           retention-days: 1
 
       - name: Print build log on failure
@@ -194,24 +220,24 @@ jobs:
 
           echo "ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT}" >> $GITHUB_ENV
 
-      - name: Download arm-v7a prebuilt
+      - name: Download libs arm-v7a
         uses: actions/download-artifact@v4
         with:
-          name: prebuilt-armv7a
-          path: prebuilt/android-arm/
+          name: libs-armv7a
+          path: android/libs/
 
-      - name: Download arm64-v8a prebuilt
+      - name: Download libs arm64-v8a
         uses: actions/download-artifact@v4
         with:
-          name: prebuilt-arm64v8a
-          path: prebuilt/android-arm64/
+          name: libs-arm64v8a
+          path: android/libs/
 
-      - name: Verify prebuilt files
+      - name: Verify native libraries
         run: |
-          echo "=== arm-v7a ==="
-          find prebuilt/android-arm -name "*.so" -o -name "*.a" | head -20
-          echo "=== arm64-v8a ==="
-          find prebuilt/android-arm64 -name "*.so" -o -name "*.a" | head -20
+          echo "=== Native libraries ==="
+          find android/libs -name "*.so" | sort
+          echo "=== Count ==="
+          find android/libs -name "*.so" | wc -l
 
       - name: Package AAR
         run: |
@@ -241,6 +267,8 @@ jobs:
             - 16KB page aligned (`-Wl,-z,max-page-size=16384`)
             - ABI: arm-v7a, arm64-v8a
             - Includes: x264, x265, libvpx, lame, libvorbis, opus, and all full-gpl codecs
+
+            **JitPack:** `implementation 'com.github.leventyayla:ffmpeg-kit:v6.0-2-16kb'`
           files: ffmpeg-kit-full-gpl-16kb.aar
           draft: false
           prerelease: false
