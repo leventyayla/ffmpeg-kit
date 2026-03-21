@@ -6,8 +6,8 @@ on:
 jobs:
   build-armv7a:
     name: Build arm-v7a
-    runs-on: macos-14
-    timeout-minutes: 240
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
 
     steps:
       - name: Checkout
@@ -21,25 +21,18 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          brew install autoconf automake libtool pkg-config \
-            curl git doxygen nasm gperf texinfo yasm bison \
-            wget meson ninja ragel groff gtk-doc
-
-      - name: Install CMake 3.28 (avoid CMake 4.x compat issues)
-        run: |
-          brew uninstall cmake 2>/dev/null || true
-          curl -sL https://github.com/Kitware/CMake/releases/download/v3.28.6/cmake-3.28.6-macos-universal.tar.gz -o cmake.tar.gz
-          tar xzf cmake.tar.gz
-          sudo cp -R cmake-3.28.6-macos-universal/CMake.app/Contents/bin/* /usr/local/bin/
-          sudo cp -R cmake-3.28.6-macos-universal/CMake.app/Contents/share/* /usr/local/share/
-          cmake --version
+          sudo apt-get update
+          sudo apt-get install -y autoconf automake libtool pkg-config \
+            curl git doxygen nasm cmake gcc gperf texinfo yasm bison \
+            autogen wget autopoint meson ninja-build ragel groff gtk-doc-tools \
+            libtool-bin
 
       - name: Setup Android SDK & NDK
         run: |
           export ANDROID_SDK_ROOT="${HOME}/android-sdk"
           mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools"
           cd "${ANDROID_SDK_ROOT}/cmdline-tools"
-          curl -sL https://dl.google.com/android/repository/commandlinetools-mac-11076708_latest.zip -o tools.zip
+          curl -sL https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -o tools.zip
           unzip -q tools.zip
           mv cmdline-tools latest
 
@@ -68,7 +61,7 @@ jobs:
             --disable-lib-gnutls \
             --disable-lib-openssl \
             --no-archive
-        timeout-minutes: 200
+        timeout-minutes: 270
 
       - name: Upload prebuilt arm-v7a
         uses: actions/upload-artifact@v4
@@ -93,8 +86,8 @@ jobs:
 
   build-arm64:
     name: Build arm64-v8a
-    runs-on: macos-14
-    timeout-minutes: 240
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
 
     steps:
       - name: Checkout
@@ -108,25 +101,18 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          brew install autoconf automake libtool pkg-config \
-            curl git doxygen nasm gperf texinfo yasm bison \
-            wget meson ninja ragel groff gtk-doc
-
-      - name: Install CMake 3.28 (avoid CMake 4.x compat issues)
-        run: |
-          brew uninstall cmake 2>/dev/null || true
-          curl -sL https://github.com/Kitware/CMake/releases/download/v3.28.6/cmake-3.28.6-macos-universal.tar.gz -o cmake.tar.gz
-          tar xzf cmake.tar.gz
-          sudo cp -R cmake-3.28.6-macos-universal/CMake.app/Contents/bin/* /usr/local/bin/
-          sudo cp -R cmake-3.28.6-macos-universal/CMake.app/Contents/share/* /usr/local/share/
-          cmake --version
+          sudo apt-get update
+          sudo apt-get install -y autoconf automake libtool pkg-config \
+            curl git doxygen nasm cmake gcc gperf texinfo yasm bison \
+            autogen wget autopoint meson ninja-build ragel groff gtk-doc-tools \
+            libtool-bin
 
       - name: Setup Android SDK & NDK
         run: |
           export ANDROID_SDK_ROOT="${HOME}/android-sdk"
           mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools"
           cd "${ANDROID_SDK_ROOT}/cmdline-tools"
-          curl -sL https://dl.google.com/android/repository/commandlinetools-mac-11076708_latest.zip -o tools.zip
+          curl -sL https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -o tools.zip
           unzip -q tools.zip
           mv cmdline-tools latest
 
@@ -155,7 +141,7 @@ jobs:
             --disable-lib-gnutls \
             --disable-lib-openssl \
             --no-archive
-        timeout-minutes: 200
+        timeout-minutes: 270
 
       - name: Upload prebuilt arm64-v8a
         uses: actions/upload-artifact@v4
