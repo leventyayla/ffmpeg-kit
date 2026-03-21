@@ -7,7 +7,7 @@ jobs:
   build-armv7a:
     name: Build arm-v7a
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 360
 
     steps:
       - name: Checkout
@@ -61,7 +61,7 @@ jobs:
             --disable-lib-gnutls \
             --disable-lib-openssl \
             --no-archive
-        timeout-minutes: 270
+        timeout-minutes: 350
 
       - name: Upload prebuilt arm-v7a
         uses: actions/upload-artifact@v4
@@ -87,7 +87,7 @@ jobs:
   build-arm64:
     name: Build arm64-v8a
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 360
 
     steps:
       - name: Checkout
@@ -141,7 +141,7 @@ jobs:
             --disable-lib-gnutls \
             --disable-lib-openssl \
             --no-archive
-        timeout-minutes: 270
+        timeout-minutes: 350
 
       - name: Upload prebuilt arm64-v8a
         uses: actions/upload-artifact@v4
