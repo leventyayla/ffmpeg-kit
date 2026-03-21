@@ -22,8 +22,17 @@ jobs:
       - name: Install build dependencies
         run: |
           brew install autoconf automake libtool pkg-config \
-            curl git doxygen nasm cmake gperf texinfo yasm bison \
+            curl git doxygen nasm gperf texinfo yasm bison \
             wget meson ninja ragel groff gtk-doc
+
+      - name: Install CMake 3.28 (avoid CMake 4.x compat issues)
+        run: |
+          brew uninstall cmake 2>/dev/null || true
+          curl -sL https://github.com/Kitware/CMake/releases/download/v3.28.6/cmake-3.28.6-macos-universal.tar.gz -o cmake.tar.gz
+          tar xzf cmake.tar.gz
+          sudo cp -R cmake-3.28.6-macos-universal/CMake.app/Contents/bin/* /usr/local/bin/
+          sudo cp -R cmake-3.28.6-macos-universal/CMake.app/Contents/share/* /usr/local/share/
+          cmake --version
 
       - name: Setup Android SDK & NDK
         run: |
@@ -100,8 +109,17 @@ jobs:
       - name: Install build dependencies
         run: |
           brew install autoconf automake libtool pkg-config \
-            curl git doxygen nasm cmake gperf texinfo yasm bison \
+            curl git doxygen nasm gperf texinfo yasm bison \
             wget meson ninja ragel groff gtk-doc
+
+      - name: Install CMake 3.28 (avoid CMake 4.x compat issues)
+        run: |
+          brew uninstall cmake 2>/dev/null || true
+          curl -sL https://github.com/Kitware/CMake/releases/download/v3.28.6/cmake-3.28.6-macos-universal.tar.gz -o cmake.tar.gz
+          tar xzf cmake.tar.gz
+          sudo cp -R cmake-3.28.6-macos-universal/CMake.app/Contents/bin/* /usr/local/bin/
+          sudo cp -R cmake-3.28.6-macos-universal/CMake.app/Contents/share/* /usr/local/share/
+          cmake --version
 
       - name: Setup Android SDK & NDK
         run: |
