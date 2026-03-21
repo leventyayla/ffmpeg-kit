@@ -12,6 +12,16 @@ install:
     {
       echo '<project>'
       echo '  <modelVersion>4.0.0</modelVersion>'
+      echo '  <groupId>jitpack.runner</groupId>'
+      echo '  <artifactId>ffmpeg-kit-runner</artifactId>'
+      echo '  <version>1.0.0</version>'
+      echo '  <packaging>pom</packaging>'
+      echo '</project>'
+    } > maven-runner-pom.xml
+  - |
+    {
+      echo '<project>'
+      echo '  <modelVersion>4.0.0</modelVersion>'
       echo '  <groupId>com.github.leventyayla</groupId>'
       echo '  <artifactId>ffmpeg-kit</artifactId>'
       echo "  <version>${VERSION}</version>"
@@ -24,6 +34,6 @@ install:
       echo '    </dependency>'
       echo '  </dependencies>'
       echo '</project>'
-    } > pom.xml
-  - cat pom.xml
-  - mvn install:install-file -Dfile=ffmpeg-kit.aar -DpomFile=pom.xml
+    } > ffmpeg-kit.pom
+  - cat ffmpeg-kit.pom
+  - mvn -f maven-runner-pom.xml org.apache.maven.plugins:maven-install-plugin:3.1.4:install-file -Dfile=ffmpeg-kit.aar -DpomFile=ffmpeg-kit.pom
