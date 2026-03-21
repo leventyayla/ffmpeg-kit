@@ -36,4 +36,4 @@ install:
       echo '</project>'
     } > ffmpeg-kit.pom
   - cat ffmpeg-kit.pom
-  - mvn -f maven-runner-pom.xml org.apache.maven.plugins:maven-install-plugin:3.1.4:install-file -Dfile=ffmpeg-kit.aar -DpomFile=ffmpeg-kit.pom
+  - mvn -f maven-runner-pom.xml install:install-file -Dfile=ffmpeg-kit.aar -DpomFile=ffmpeg-kit.pom
