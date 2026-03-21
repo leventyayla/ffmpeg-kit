@@ -16,13 +16,6 @@ jobs:
           sudo docker image prune -af 2>/dev/null || true
           df -h /
 
-      - name: Add swap
-        run: |
-          sudo fallocate -l 8G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
-
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -38,7 +31,7 @@ jobs:
           sudo apt-get install -y autoconf automake libtool pkg-config \
             curl git doxygen nasm cmake gcc gperf texinfo yasm bison \
             autogen wget autopoint meson ninja-build ragel groff gtk-doc-tools \
-            libtool-bin ccache
+            libtool-bin
 
       - name: Setup Android SDK & NDK
         run: |
@@ -109,13 +102,6 @@ jobs:
           sudo docker image prune -af 2>/dev/null || true
           df -h /
 
-      - name: Add swap
-        run: |
-          sudo fallocate -l 8G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
-
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -131,7 +117,7 @@ jobs:
           sudo apt-get install -y autoconf automake libtool pkg-config \
             curl git doxygen nasm cmake gcc gperf texinfo yasm bison \
             autogen wget autopoint meson ninja-build ragel groff gtk-doc-tools \
-            libtool-bin ccache
+            libtool-bin
 
       - name: Setup Android SDK & NDK
         run: |
