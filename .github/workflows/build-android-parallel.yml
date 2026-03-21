@@ -1,0 +1,244 @@
+name: Build Android AAR (Parallel)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-armv7a:
+    name: Build arm-v7a
+    runs-on: macos-14
+    timeout-minutes: 240
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install build dependencies
+        run: |
+          brew install autoconf automake libtool pkg-config \
+            curl git doxygen nasm cmake gperf texinfo yasm bison \
+            wget meson ninja ragel groff gtk-doc
+
+      - name: Setup Android SDK & NDK
+        run: |
+          export ANDROID_SDK_ROOT="${HOME}/android-sdk"
+          mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools"
+          cd "${ANDROID_SDK_ROOT}/cmdline-tools"
+          curl -sL https://dl.google.com/android/repository/commandlinetools-mac-11076708_latest.zip -o tools.zip
+          unzip -q tools.zip
+          mv cmdline-tools latest
+
+          yes | "${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
+          "${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager" "ndk;27.2.12479018" "platforms;android-35"
+
+          echo "ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT}" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=${ANDROID_SDK_ROOT}/ndk/27.2.12479018" >> $GITHUB_ENV
+
+      - name: Build (arm-v7a only)
+        run: |
+          chmod +x android.sh
+          ./android.sh --full --enable-gpl \
+            --disable-arm64-v8a \
+            --disable-x86 --disable-x86-64 \
+            --disable-arm-v7a-neon \
+            --disable-lib-sdl \
+            --disable-lib-tesseract \
+            --disable-lib-leptonica \
+            --disable-lib-chromaprint \
+            --disable-lib-libuuid \
+            --disable-lib-rubberband \
+            --disable-lib-libsndfile \
+            --disable-lib-libsamplerate \
+            --disable-lib-srt \
+            --disable-lib-gnutls \
+            --disable-lib-openssl \
+            --no-archive
+        timeout-minutes: 200
+
+      - name: Upload prebuilt arm-v7a
+        uses: actions/upload-artifact@v4
+        with:
+          name: prebuilt-armv7a
+          path: prebuilt/android-arm/
+          retention-days: 1
+
+      - name: Print build log on failure
+        if: failure()
+        run: tail -500 build.log || echo "build.log not found"
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs-armv7a
+          path: |
+            build.log
+            src/*/config.log
+          retention-days: 7
+
+  build-arm64:
+    name: Build arm64-v8a
+    runs-on: macos-14
+    timeout-minutes: 240
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install build dependencies
+        run: |
+          brew install autoconf automake libtool pkg-config \
+            curl git doxygen nasm cmake gperf texinfo yasm bison \
+            wget meson ninja ragel groff gtk-doc
+
+      - name: Setup Android SDK & NDK
+        run: |
+          export ANDROID_SDK_ROOT="${HOME}/android-sdk"
+          mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools"
+          cd "${ANDROID_SDK_ROOT}/cmdline-tools"
+          curl -sL https://dl.google.com/android/repository/commandlinetools-mac-11076708_latest.zip -o tools.zip
+          unzip -q tools.zip
+          mv cmdline-tools latest
+
+          yes | "${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
+          "${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager" "ndk;27.2.12479018" "platforms;android-35"
+
+          echo "ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT}" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=${ANDROID_SDK_ROOT}/ndk/27.2.12479018" >> $GITHUB_ENV
+
+      - name: Build (arm64-v8a only)
+        run: |
+          chmod +x android.sh
+          ./android.sh --full --enable-gpl \
+            --disable-arm-v7a \
+            --disable-x86 --disable-x86-64 \
+            --disable-arm-v7a-neon \
+            --disable-lib-sdl \
+            --disable-lib-tesseract \
+            --disable-lib-leptonica \
+            --disable-lib-chromaprint \
+            --disable-lib-libuuid \
+            --disable-lib-rubberband \
+            --disable-lib-libsndfile \
+            --disable-lib-libsamplerate \
+            --disable-lib-srt \
+            --disable-lib-gnutls \
+            --disable-lib-openssl \
+            --no-archive
+        timeout-minutes: 200
+
+      - name: Upload prebuilt arm64-v8a
+        uses: actions/upload-artifact@v4
+        with:
+          name: prebuilt-arm64v8a
+          path: prebuilt/android-arm64/
+          retention-days: 1
+
+      - name: Print build log on failure
+        if: failure()
+        run: tail -500 build.log || echo "build.log not found"
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs-arm64
+          path: |
+            build.log
+            src/*/config.log
+          retention-days: 7
+
+  package:
+    name: Package AAR
+    needs: [build-armv7a, build-arm64]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        run: |
+          export ANDROID_SDK_ROOT="${HOME}/android-sdk"
+          mkdir -p "${ANDROID_SDK_ROOT}/cmdline-tools"
+          cd "${ANDROID_SDK_ROOT}/cmdline-tools"
+          curl -sL https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -o tools.zip
+          unzip -q tools.zip
+          mv cmdline-tools latest
+
+          yes | "${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
+          "${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35"
+
+          echo "ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT}" >> $GITHUB_ENV
+
+      - name: Download arm-v7a prebuilt
+        uses: actions/download-artifact@v4
+        with:
+          name: prebuilt-armv7a
+          path: prebuilt/android-arm/
+
+      - name: Download arm64-v8a prebuilt
+        uses: actions/download-artifact@v4
+        with:
+          name: prebuilt-arm64v8a
+          path: prebuilt/android-arm64/
+
+      - name: Verify prebuilt files
+        run: |
+          echo "=== arm-v7a ==="
+          find prebuilt/android-arm -name "*.so" -o -name "*.a" | head -20
+          echo "=== arm64-v8a ==="
+          find prebuilt/android-arm64 -name "*.so" -o -name "*.a" | head -20
+
+      - name: Package AAR
+        run: |
+          cd android/ffmpeg-kit-android-lib
+          chmod +x ../gradlew
+          ../gradlew assembleRelease
+          cp build/outputs/aar/*.aar "${GITHUB_WORKSPACE}/ffmpeg-kit-full-gpl-16kb.aar"
+          ls -lh "${GITHUB_WORKSPACE}/ffmpeg-kit-full-gpl-16kb.aar"
+
+      - name: Upload AAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg-kit-full-gpl-16kb
+          path: ffmpeg-kit-full-gpl-16kb.aar
+          retention-days: 90
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v6.0-2-16kb
+          name: FFmpeg Kit 6.0-2 (16KB aligned, full-gpl)
+          body: |
+            FFmpeg Kit full-gpl build with 16KB page alignment support.
+
+            - Based on arthenica/ffmpeg-kit 6.0-2
+            - Built with NDK r27c
+            - 16KB page aligned (`-Wl,-z,max-page-size=16384`)
+            - ABI: arm-v7a, arm64-v8a
+            - Includes: x264, x265, libvpx, lame, libvorbis, opus, and all full-gpl codecs
+          files: ffmpeg-kit-full-gpl-16kb.aar
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
