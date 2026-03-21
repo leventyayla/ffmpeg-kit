@@ -31,10 +31,13 @@ esac
 mkdir -p "${BUILD_DIR}" || return 1
 cd "${BUILD_DIR}" || return 1
 
+# Add cpu-features include path for ARM CPU detection (needed by arm_cpudetect.c)
+AOM_CFLAGS="${CFLAGS} -I${LIB_INSTALL_BASE}/cpu-features/include/ndk_compat"
+
 cmake -Wno-dev \
   -DCMAKE_VERBOSE_MAKEFILE=0 \
   -DCONFIG_PIC=1 \
-  -DCMAKE_C_FLAGS="${CFLAGS}" \
+  -DCMAKE_C_FLAGS="${AOM_CFLAGS}" \
   -DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
   -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}" \
   -DCMAKE_SYSROOT="${ANDROID_SYSROOT}" \
@@ -53,6 +56,7 @@ cmake -Wno-dev \
   -DENABLE_EXAMPLES=0 \
   -DENABLE_TOOLS=0 \
   -DCONFIG_UNIT_TESTS=0 \
+  -DCONFIG_RUNTIME_CPU_DETECT=0 \
   -DAOM_TARGET_CPU=${AOM_CPU} \
   -DBUILD_SHARED_LIBS=0 "${BASEDIR}"/src/"${LIB_NAME}" || return 1
 
