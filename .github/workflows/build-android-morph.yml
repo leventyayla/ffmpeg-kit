@@ -6,8 +6,16 @@ on:
       publish_release:
         description: "Publish GitHub release on success"
         required: false
-        default: false
+        default: true
         type: boolean
+      release_tag:
+        description: "Release tag for JitPack"
+        required: false
+        default: "v6.0-2-morph-plus-16kb"
+        type: string
+
+permissions:
+  contents: write
 
 jobs:
   build-armv7a:
@@ -64,6 +72,12 @@ jobs:
             --enable-lame \
             --enable-libvpx \
             --enable-libvorbis \
+            --enable-opus \
+            --enable-libaom \
+            --enable-dav1d \
+            --enable-libwebp \
+            --enable-zimg \
+            --enable-soxr \
             --disable-arm64-v8a \
             --disable-x86 --disable-x86-64 \
             --disable-arm-v7a-neon \
@@ -73,7 +87,7 @@ jobs:
       - name: Upload libs arm-v7a
         uses: actions/upload-artifact@v4
         with:
-          name: libs-armv7a-morph
+          name: libs-armv7a-morph-plus
           path: android/libs/
           retention-days: 1
 
@@ -85,7 +99,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: build-logs-armv7a-morph
+          name: build-logs-armv7a-morph-plus
           path: |
             build.log
             src/*/config.log
@@ -145,6 +159,12 @@ jobs:
             --enable-lame \
             --enable-libvpx \
             --enable-libvorbis \
+            --enable-opus \
+            --enable-libaom \
+            --enable-dav1d \
+            --enable-libwebp \
+            --enable-zimg \
+            --enable-soxr \
             --disable-arm-v7a \
             --disable-x86 --disable-x86-64 \
             --disable-arm-v7a-neon \
@@ -154,7 +174,7 @@ jobs:
       - name: Upload libs arm64-v8a
         uses: actions/upload-artifact@v4
         with:
-          name: libs-arm64v8a-morph
+          name: libs-arm64v8a-morph-plus
           path: android/libs/
           retention-days: 1
 
@@ -166,7 +186,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: build-logs-arm64-morph
+          name: build-logs-arm64-morph-plus
           path: |
             build.log
             src/*/config.log
@@ -206,13 +226,13 @@ jobs:
       - name: Download libs arm-v7a
         uses: actions/download-artifact@v4
         with:
-          name: libs-armv7a-morph
+          name: libs-armv7a-morph-plus
           path: android/libs/
 
       - name: Download libs arm64-v8a
         uses: actions/download-artifact@v4
         with:
-          name: libs-arm64v8a-morph
+          name: libs-arm64v8a-morph-plus
           path: android/libs/
 
       - name: Verify native libraries
@@ -227,24 +247,24 @@ jobs:
           cd android/ffmpeg-kit-android-lib
           chmod +x ../gradlew
           ../gradlew assembleRelease
-          cp build/outputs/aar/*.aar "${GITHUB_WORKSPACE}/ffmpeg-kit-morph-16kb.aar"
-          ls -lh "${GITHUB_WORKSPACE}/ffmpeg-kit-morph-16kb.aar"
+          cp build/outputs/aar/*.aar "${GITHUB_WORKSPACE}/ffmpeg-kit-morph-plus-16kb.aar"
+          ls -lh "${GITHUB_WORKSPACE}/ffmpeg-kit-morph-plus-16kb.aar"
 
       - name: Upload AAR artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ffmpeg-kit-morph-16kb
-          path: ffmpeg-kit-morph-16kb.aar
+          name: ffmpeg-kit-morph-plus-16kb
+          path: ffmpeg-kit-morph-plus-16kb.aar
           retention-days: 90
 
       - name: Create Release
         if: ${{ inputs.publish_release == true }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v6.0-2-morph-16kb
-          name: FFmpeg Kit 6.0-2 (Morph 16KB)
+          tag_name: ${{ inputs.release_tag }}
+          name: FFmpeg Kit 6.0-2 (Morph Plus 16KB)
           body: |
-            FFmpeg Kit build for Morph presets with 16KB page alignment support.
+            FFmpeg Kit build for Morph with 16KB page alignment support.
 
             Enabled external libraries:
             - x264
@@ -252,11 +272,20 @@ jobs:
             - lame
             - libvpx
             - libvorbis
+            - opus
+            - libaom
+            - dav1d
+            - libwebp
+            - zimg
+            - soxr
 
             ABI:
             - arm-v7a
             - arm64-v8a
-          files: ffmpeg-kit-morph-16kb.aar
+
+            JitPack dependency:
+            implementation("com.github.leventyayla:ffmpeg-kit:${{ inputs.release_tag }}")
+          files: ffmpeg-kit-morph-plus-16kb.aar
           draft: false
           prerelease: false
         env:

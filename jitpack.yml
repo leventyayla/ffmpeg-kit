@@ -4,7 +4,7 @@ jdk:
 before_install:
   - TAG="${VERSION}"
   - echo "Downloading AAR for tag ${TAG}..."
-  - curl -sL -f "https://github.com/leventyayla/ffmpeg-kit/releases/download/${TAG}/ffmpeg-kit-full-gpl-16kb.aar" -o ffmpeg-kit.aar
+  - curl -sL -f "https://github.com/leventyayla/ffmpeg-kit/releases/download/${TAG}/ffmpeg-kit-morph-plus-16kb.aar" -o ffmpeg-kit.aar
   - ls -lh ffmpeg-kit.aar
 
 install:
