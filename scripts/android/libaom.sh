@@ -4,40 +4,37 @@
 git checkout ${BASEDIR}/src/${LIB_NAME}/aom_ports 1>>"${BASEDIR}"/build.log 2>&1
 
 # SET BUILD OPTIONS
+# NOTE: NEON is disabled for ARM cross-compilation because AOM_TARGET_CPU=generic
+# generates _c function stubs in RTCD header, while ENABLE_NEON=1 compiles NEON
+# source files that reference _neon functions (causing undeclared function errors).
+# Setting AOM_TARGET_CPU=arm64 requires cpu-features.h and introduces further
+# cross-compilation issues. dav1d handles AV1 decoding; libaom is mainly for encoding.
 ASM_OPTIONS=""
 case ${ARCH} in
 arm-v7a)
   ASM_OPTIONS="-DARCH_ARM=1 -DENABLE_NEON=0 -DHAVE_NEON=0"
-  AOM_CPU="armv7"
   ;;
 arm-v7a-neon)
-  ASM_OPTIONS="-DARCH_ARM=1 -DENABLE_NEON=1 -DHAVE_NEON=1"
-  AOM_CPU="armv7"
+  ASM_OPTIONS="-DARCH_ARM=1 -DENABLE_NEON=0 -DHAVE_NEON=0"
   ;;
 arm64-v8a)
-  ASM_OPTIONS="-DARCH_ARM=1 -DENABLE_NEON=1 -DHAVE_NEON=1"
-  AOM_CPU="arm64"
+  ASM_OPTIONS="-DARCH_ARM=1 -DENABLE_NEON=0 -DHAVE_NEON=0"
   ;;
 x86)
   ASM_OPTIONS="-DENABLE_SSE=1 -DHAVE_SSE=1 -DENABLE_SSE3=1 -DHAVE_SSE3=1"
-  AOM_CPU="x86"
   ;;
 x86-64)
   ASM_OPTIONS="-DENABLE_SSE4_2=1 -DHAVE_SSE4_2=1"
-  AOM_CPU="x86_64"
   ;;
 esac
 
 mkdir -p "${BUILD_DIR}" || return 1
 cd "${BUILD_DIR}" || return 1
 
-# Add cpu-features include path for ARM CPU detection (needed by arm_cpudetect.c)
-AOM_CFLAGS="${CFLAGS} -I${LIB_INSTALL_BASE}/cpu-features/include/ndk_compat"
-
 cmake -Wno-dev \
   -DCMAKE_VERBOSE_MAKEFILE=0 \
   -DCONFIG_PIC=1 \
-  -DCMAKE_C_FLAGS="${AOM_CFLAGS}" \
+  -DCMAKE_C_FLAGS="${CFLAGS}" \
   -DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
   -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}" \
   -DCMAKE_SYSROOT="${ANDROID_SYSROOT}" \
@@ -57,7 +54,7 @@ cmake -Wno-dev \
   -DENABLE_TOOLS=0 \
   -DCONFIG_UNIT_TESTS=0 \
   -DCONFIG_RUNTIME_CPU_DETECT=0 \
-  -DAOM_TARGET_CPU=${AOM_CPU} \
+  -DAOM_TARGET_CPU=generic \
   -DBUILD_SHARED_LIBS=0 "${BASEDIR}"/src/"${LIB_NAME}" || return 1
 
 make -j$(get_cpu_count) || return 1
