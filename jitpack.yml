@@ -9,20 +9,21 @@ before_install:
 
 install:
   - |
-    cat > pom.xml << EOF
-    <project>
-      <modelVersion>4.0.0</modelVersion>
-      <groupId>com.github.leventyayla</groupId>
-      <artifactId>ffmpeg-kit</artifactId>
-      <version>${VERSION}</version>
-      <packaging>aar</packaging>
-      <dependencies>
-        <dependency>
-          <groupId>com.arthenica</groupId>
-          <artifactId>smart-exception-java</artifactId>
-          <version>0.2.1</version>
-        </dependency>
-      </dependencies>
-    </project>
-    EOF
+    {
+      echo '<project>'
+      echo '  <modelVersion>4.0.0</modelVersion>'
+      echo '  <groupId>com.github.leventyayla</groupId>'
+      echo '  <artifactId>ffmpeg-kit</artifactId>'
+      echo "  <version>${VERSION}</version>"
+      echo '  <packaging>aar</packaging>'
+      echo '  <dependencies>'
+      echo '    <dependency>'
+      echo '      <groupId>com.arthenica</groupId>'
+      echo '      <artifactId>smart-exception-java</artifactId>'
+      echo '      <version>0.2.1</version>'
+      echo '    </dependency>'
+      echo '  </dependencies>'
+      echo '</project>'
+    } > pom.xml
+  - cat pom.xml
   - mvn install:install-file -Dfile=ffmpeg-kit.aar -DpomFile=pom.xml
