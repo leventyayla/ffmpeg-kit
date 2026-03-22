@@ -77,9 +77,6 @@ On macOS, use:
 tools/android/build-morph-full-16kb-macos.sh
 ```
 
-This script checks and installs missing build prerequisites via Homebrew before starting the build.
-By default it auto-accepts Android SDK licenses; set `FFMPEG_KIT_ACCEPT_ANDROID_LICENSES=no` to force explicit confirmation.
-
 This creates:
 
 ```text
