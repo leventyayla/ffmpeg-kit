@@ -11,7 +11,7 @@ on:
       release_tag:
         description: "Release tag for JitPack"
         required: false
-        default: "v6.0-2-morph-plus-16kb-full"
+        default: "v6.0-2-morph-plus-16kb"
         type: string
 
 permissions:
@@ -452,10 +452,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.release_tag }}
-          name: FFmpeg Kit 6.0-2 (Morph Plus 16KB Full ABI)
+          name: FFmpeg Kit 6.0-2 (Morph Plus 16KB)
           body: |
             FFmpeg Kit build for Morph with 16KB page alignment support.
-            Full ABI support for all Android architectures.
 
             Enabled external libraries:
             - x264
