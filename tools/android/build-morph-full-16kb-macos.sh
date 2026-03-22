@@ -8,6 +8,7 @@ if [[ "${1:-}" == "--help" ]]; then
   echo "Builds Morph full-GPL Android AAR (all ABIs, 16KB-compatible) on macOS."
   echo "The script checks/installs missing build dependencies via Homebrew,"
   echo "installs/updates Android NDK+platform via sdkmanager, then runs the local full build."
+  echo "Set FFMPEG_KIT_ACCEPT_ANDROID_LICENSES=no to require explicit license confirmation."
   exit 0
 fi
 
@@ -71,6 +72,7 @@ export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_SDK_ROOT_DEFAULT}}"
 export ANDROID_HOME="${ANDROID_HOME:-${ANDROID_SDK_ROOT}}"
 export ANDROID_NDK_VERSION="${ANDROID_NDK_VERSION:-27.2.12479018}"
 export ANDROID_NDK_ROOT="${ANDROID_NDK_ROOT:-${ANDROID_SDK_ROOT}/ndk/${ANDROID_NDK_VERSION}}"
+export FFMPEG_KIT_ACCEPT_ANDROID_LICENSES="${FFMPEG_KIT_ACCEPT_ANDROID_LICENSES:-yes}"
 
 SDKMANAGER="${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager"
 
@@ -82,8 +84,17 @@ if [[ ! -x "${SDKMANAGER}" ]]; then
     "/opt/homebrew/share/android-commandlinetools/cmdline-tools" \
     "/usr/local/share/android-commandlinetools/cmdline-tools"; do
     if [[ -x "${tools_root}/bin/sdkmanager" ]]; then
-      rm -rf "${ANDROID_SDK_ROOT}/cmdline-tools/latest"
-      ln -s "${tools_root}" "${ANDROID_SDK_ROOT}/cmdline-tools/latest"
+      latest_link="${ANDROID_SDK_ROOT}/cmdline-tools/latest"
+      if [[ -z "${ANDROID_SDK_ROOT}" || "${ANDROID_SDK_ROOT}" == "/" ]]; then
+        echo "ANDROID_SDK_ROOT is unsafe: '${ANDROID_SDK_ROOT}'" >&2
+        exit 1
+      fi
+      if [[ "${latest_link}" != "${ANDROID_SDK_ROOT}/cmdline-tools/latest" ]]; then
+        echo "Refusing to remove unexpected path: ${latest_link}" >&2
+        exit 1
+      fi
+      rm -rf "${latest_link}"
+      ln -s "${tools_root}" "${latest_link}"
       break
     fi
   done
@@ -98,6 +109,11 @@ fi
 
 echo "Using ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT}"
 echo "Using ANDROID_NDK_ROOT=${ANDROID_NDK_ROOT}"
+
+if [[ "${FFMPEG_KIT_ACCEPT_ANDROID_LICENSES}" != "yes" ]]; then
+  echo "Android SDK licenses are required. Re-run with FFMPEG_KIT_ACCEPT_ANDROID_LICENSES=yes." >&2
+  exit 1
+fi
 
 echo "Accepting Android SDK licenses automatically via sdkmanager --licenses."
 yes | "${SDKMANAGER}" --licenses >/dev/null 2>&1 || true
