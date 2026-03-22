@@ -85,11 +85,11 @@ if [[ ! -x "${SDKMANAGER}" ]]; then
     "/usr/local/share/android-commandlinetools/cmdline-tools"; do
     if [[ -x "${tools_root}/bin/sdkmanager" ]]; then
       latest_link="${ANDROID_SDK_ROOT}/cmdline-tools/latest"
-      if [[ -z "${ANDROID_SDK_ROOT}" || "${ANDROID_SDK_ROOT}" == "/" ]]; then
+      if [[ "${ANDROID_SDK_ROOT}" == "/" ]]; then
         echo "ANDROID_SDK_ROOT is unsafe: '${ANDROID_SDK_ROOT}'" >&2
         exit 1
       fi
-      if [[ "${latest_link}" != "${ANDROID_SDK_ROOT}/cmdline-tools/latest" ]]; then
+      if [[ "${latest_link}" != */cmdline-tools/latest ]]; then
         echo "Refusing to remove unexpected path: ${latest_link}" >&2
         exit 1
       fi
