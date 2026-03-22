@@ -4,7 +4,7 @@ jdk:
 before_install:
   - TAG="${VERSION}"
   - echo "Downloading AAR for tag ${TAG}..."
-  - for i in 1 2 3 4 5; do curl -sL -f --retry 3 --retry-delay 10 "https://github.com/leventyayla/ffmpeg-kit/releases/download/${TAG}/ffmpeg-kit-morph-plus-16kb.aar" -o ffmpeg-kit.aar && break || echo "Attempt $i failed, retrying in 15s..." && sleep 15; done
+  - for i in 1 2 3 4 5; do curl -sL -f --retry 3 --retry-delay 10 "https://github.com/leventyayla/ffmpeg-kit/releases/download/${TAG}/ffmpeg-kit-morph-full-16kb.aar" -o ffmpeg-kit.aar && break || echo "Attempt $i failed, retrying in 15s..." && sleep 15; done
   - ls -lh ffmpeg-kit.aar
 
 install:
