@@ -77,6 +77,8 @@ On macOS, use:
 tools/android/build-morph-full-16kb-macos.sh
 ```
 
+This script checks and installs missing build prerequisites via Homebrew before starting the build.
+
 This creates:
 
 ```text
