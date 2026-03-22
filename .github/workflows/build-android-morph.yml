@@ -1,4 +1,4 @@
-name: Build Android AAR (Morph Full 16KB)
+name: Build Android AAR (Morph 16KB)
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ on:
       release_tag:
         description: "Release tag for JitPack"
         required: false
-        default: "v6.0-5-morph-full-16kb"
+        default: "v6.0-4-morph-plus-16kb"
         type: string
 
 permissions:
@@ -66,7 +66,18 @@ jobs:
       - name: Build (arm-v7a only)
         run: |
           chmod +x android.sh
-          ./android.sh --enable-gpl --full \
+          ./android.sh --enable-gpl \
+            --enable-x264 \
+            --enable-x265 \
+            --enable-lame \
+            --enable-libvpx \
+            --enable-libvorbis \
+            --enable-opus \
+            --enable-libaom \
+            --enable-dav1d \
+            --enable-libwebp \
+            --enable-zimg \
+            --enable-soxr \
             --disable-arm64-v8a \
             --disable-x86 --disable-x86-64 \
             --disable-arm-v7a-neon \
@@ -142,7 +153,18 @@ jobs:
       - name: Build (arm64-v8a only)
         run: |
           chmod +x android.sh
-          ./android.sh --enable-gpl --full \
+          ./android.sh --enable-gpl \
+            --enable-x264 \
+            --enable-x265 \
+            --enable-lame \
+            --enable-libvpx \
+            --enable-libvorbis \
+            --enable-opus \
+            --enable-libaom \
+            --enable-dav1d \
+            --enable-libwebp \
+            --enable-zimg \
+            --enable-soxr \
             --disable-arm-v7a \
             --disable-x86 --disable-x86-64 \
             --disable-arm-v7a-neon \
@@ -218,7 +240,18 @@ jobs:
       - name: Build (x86 only)
         run: |
           chmod +x android.sh
-          ./android.sh --enable-gpl --full \
+          ./android.sh --enable-gpl \
+            --enable-x264 \
+            --enable-x265 \
+            --enable-lame \
+            --enable-libvpx \
+            --enable-libvorbis \
+            --enable-opus \
+            --enable-libaom \
+            --enable-dav1d \
+            --enable-libwebp \
+            --enable-zimg \
+            --enable-soxr \
             --disable-arm-v7a \
             --disable-arm-v7a-neon \
             --disable-arm64-v8a \
@@ -295,7 +328,18 @@ jobs:
       - name: Build (x86_64 only)
         run: |
           chmod +x android.sh
-          ./android.sh --enable-gpl --full \
+          ./android.sh --enable-gpl \
+            --enable-x264 \
+            --enable-x265 \
+            --enable-lame \
+            --enable-libvpx \
+            --enable-libvorbis \
+            --enable-opus \
+            --enable-libaom \
+            --enable-dav1d \
+            --enable-libwebp \
+            --enable-zimg \
+            --enable-soxr \
             --disable-arm-v7a \
             --disable-arm-v7a-neon \
             --disable-arm64-v8a \
@@ -393,14 +437,14 @@ jobs:
           cd android/ffmpeg-kit-android-lib
           chmod +x ../gradlew
           ../gradlew assembleRelease
-          cp build/outputs/aar/*.aar "${GITHUB_WORKSPACE}/ffmpeg-kit-morph-full-16kb.aar"
-          ls -lh "${GITHUB_WORKSPACE}/ffmpeg-kit-morph-full-16kb.aar"
+          cp build/outputs/aar/*.aar "${GITHUB_WORKSPACE}/ffmpeg-kit-morph-plus-16kb.aar"
+          ls -lh "${GITHUB_WORKSPACE}/ffmpeg-kit-morph-plus-16kb.aar"
 
       - name: Upload AAR artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ffmpeg-kit-morph-full-16kb
-          path: ffmpeg-kit-morph-full-16kb.aar
+          name: ffmpeg-kit-morph-plus-16kb
+          path: ffmpeg-kit-morph-plus-16kb.aar
           retention-days: 90
 
       - name: Create Release
@@ -408,13 +452,22 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.release_tag }}
-          name: FFmpeg Kit 6.0-5 (Morph Full 16KB)
+          name: FFmpeg Kit 6.0-2 (Morph Plus 16KB)
           body: |
-            FFmpeg Kit Morph release with 16KB page alignment support and full GPL codec set.
+            FFmpeg Kit build for Morph with 16KB page alignment support.
 
-            Build flags:
-            - --enable-gpl
-            - --full
+            Enabled external libraries:
+            - x264
+            - x265
+            - lame
+            - libvpx
+            - libvorbis
+            - opus
+            - libaom
+            - dav1d
+            - libwebp
+            - zimg
+            - soxr
 
             ABI:
             - armeabi-v7a
@@ -424,7 +477,7 @@ jobs:
 
             JitPack dependency:
             implementation("com.github.leventyayla:ffmpeg-kit:${{ inputs.release_tag }}")
-          files: ffmpeg-kit-morph-full-16kb.aar
+          files: ffmpeg-kit-morph-plus-16kb.aar
           draft: false
           prerelease: false
         env:

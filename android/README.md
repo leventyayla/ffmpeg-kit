@@ -71,6 +71,12 @@ For Morph full codec (`--enable-gpl --full`) builds without GitHub Actions, use:
 tools/android/build-morph-full-16kb.sh
 ```
 
+On macOS, use:
+
+```bash
+tools/android/build-morph-full-16kb-macos.sh
+```
+
 This creates:
 
 ```text
