@@ -85,6 +85,12 @@ prebuilt/bundle-android-aar/ffmpeg-kit/ffmpeg-kit-morph-full-16kb.aar
 
 Upload this file to a GitHub Release tag (for example `v6.0-5-morph-full-16kb`) so it can be consumed via JitPack.
 
+After publishing the release asset, consume it from Gradle:
+
+```gradle
+implementation("com.github.leventyayla:ffmpeg-kit:<release_tag>")
+```
+
 ### 3. Using
 
 #### 3.1 Android API

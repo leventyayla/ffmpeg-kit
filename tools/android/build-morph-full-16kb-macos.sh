@@ -35,6 +35,7 @@ fi
 echo "Using ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT}"
 echo "Using ANDROID_NDK_ROOT=${ANDROID_NDK_ROOT}"
 
+echo "Accepting Android SDK licenses automatically via sdkmanager --licenses."
 yes | "${SDKMANAGER}" --licenses >/dev/null 2>&1 || true
 "${SDKMANAGER}" "platforms;android-35" "ndk;${ANDROID_NDK_VERSION}"
 
