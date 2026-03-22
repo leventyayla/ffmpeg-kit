@@ -63,6 +63,22 @@ All libraries created by `android.sh` can be found under the `prebuilt` director
 - `Android` archive (.aar file) for `Main` builds is located under the `bundle-android-aar` folder.
 - `Android` archive (.aar file) for `LTS` builds is located under the `bundle-android-aar-lts` folder.
 
+#### 2.5 Morph Full 16KB Local Release
+
+For Morph full codec (`--enable-gpl --full`) builds without GitHub Actions, use:
+
+```bash
+tools/android/build-morph-full-16kb.sh
+```
+
+This creates:
+
+```text
+prebuilt/bundle-android-aar/ffmpeg-kit/ffmpeg-kit-morph-full-16kb.aar
+```
+
+Upload this file to a GitHub Release tag (for example `v6.0-5-morph-full-16kb`) so it can be consumed via JitPack.
+
 ### 3. Using
 
 #### 3.1 Android API
