@@ -11,7 +11,7 @@ on:
       release_tag:
         description: "Release tag for JitPack"
         required: false
-        default: "v6.0-2-morph-plus-16kb"
+        default: "v6.0-3-morph-plus-16kb"
         type: string
 
 permissions:
