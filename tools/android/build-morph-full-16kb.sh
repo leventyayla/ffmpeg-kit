@@ -5,7 +5,7 @@ set -euo pipefail
 if [[ "${1:-}" == "--help" ]]; then
   echo "Usage: tools/android/build-morph-full-16kb.sh"
   echo
-  echo "Builds Morph full-gpl Android AAR (16KB page-size compatible) locally without GitHub Actions."
+  echo "Builds Morph full-GPL Android AAR (16KB page-size compatible) locally without GitHub Actions."
   echo "Requires ANDROID_SDK_ROOT and ANDROID_NDK_ROOT to be set."
   exit 0
 fi
