@@ -68,12 +68,6 @@ All libraries created by `android.sh` can be found under the `prebuilt` director
 For Morph full codec (`--enable-gpl --full`) builds without GitHub Actions, use:
 
 ```bash
-tools/android/build-morph-full-16kb.sh
-```
-
-On macOS, use:
-
-```bash
 tools/android/build-morph-full-16kb-macos.sh
 ```
 
