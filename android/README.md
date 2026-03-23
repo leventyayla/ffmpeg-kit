@@ -82,7 +82,7 @@ Upload this file to a GitHub Release tag (for example `v6.0-5-morph-full-16kb`) 
 After publishing the release asset, consume it from Gradle:
 
 ```gradle
-implementation("com.github.leventyayla:ffmpeg-kit:<release_tag>")
+implementation("com.github.leventyayla:ffmpeg-kit:v6.0-5-morph-full-16kb")
 ```
 
 ### 3. Using
