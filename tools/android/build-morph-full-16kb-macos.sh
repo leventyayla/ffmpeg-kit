@@ -74,6 +74,11 @@ export ANDROID_NDK_VERSION="${ANDROID_NDK_VERSION:-27.2.12479018}"
 export ANDROID_NDK_ROOT="${ANDROID_NDK_ROOT:-${ANDROID_SDK_ROOT}/ndk/${ANDROID_NDK_VERSION}}"
 export FFMPEG_KIT_ACCEPT_ANDROID_LICENSES="${FFMPEG_KIT_ACCEPT_ANDROID_LICENSES:-yes}"
 
+if [[ -z "${ANDROID_SDK_ROOT}" || "${ANDROID_SDK_ROOT}" == "/" || "${ANDROID_SDK_ROOT}" == "/bin" || "${ANDROID_SDK_ROOT}" == "/usr" || "${ANDROID_SDK_ROOT}" == "/System" ]]; then
+  echo "ANDROID_SDK_ROOT is unsafe: '${ANDROID_SDK_ROOT}'" >&2
+  exit 1
+fi
+
 SDKMANAGER="${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager"
 
 if [[ ! -x "${SDKMANAGER}" ]]; then
@@ -85,10 +90,6 @@ if [[ ! -x "${SDKMANAGER}" ]]; then
     "/usr/local/share/android-commandlinetools/cmdline-tools"; do
     if [[ -x "${tools_root}/bin/sdkmanager" ]]; then
       latest_link="${ANDROID_SDK_ROOT}/cmdline-tools/latest"
-      if [[ -z "${ANDROID_SDK_ROOT}" || "${ANDROID_SDK_ROOT}" == "/" || "${ANDROID_SDK_ROOT}" == "/bin" || "${ANDROID_SDK_ROOT}" == "/usr" || "${ANDROID_SDK_ROOT}" == "/System" ]]; then
-        echo "ANDROID_SDK_ROOT is unsafe: '${ANDROID_SDK_ROOT}'" >&2
-        exit 1
-      fi
       if [[ "${latest_link}" != */cmdline-tools/latest ]]; then
         echo "Refusing to remove unexpected path: ${latest_link}" >&2
         exit 1
