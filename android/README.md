@@ -63,6 +63,22 @@ All libraries created by `android.sh` can be found under the `prebuilt` director
 - `Android` archive (.aar file) for `Main` builds is located under the `bundle-android-aar` folder.
 - `Android` archive (.aar file) for `LTS` builds is located under the `bundle-android-aar-lts` folder.
 
+#### 2.5 JitPack Release Assets
+
+Release asset names are resolved from the Git tag suffix in `jitpack.yml`.
+
+```text
+v6.0-4-morph-plus-16kb -> ffmpeg-kit-morph-plus-16kb.aar
+v6.0-4-morph-full-16kb -> ffmpeg-kit-morph-full-16kb.aar
+```
+
+For example, after uploading `prebuilt/bundle-android-aar/ffmpeg-kit/ffmpeg-kit-morph-full-16kb.aar`
+to the `v6.0-4-morph-full-16kb` GitHub release, consume it with:
+
+```gradle
+implementation("com.github.leventyayla:ffmpeg-kit:v6.0-4-morph-full-16kb")
+```
+
 ### 3. Using
 
 #### 3.1 Android API
